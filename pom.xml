@@ -13,7 +13,7 @@
 
 	<groupId>tn.esprit.spring</groupId>
 	<artifactId>gestion_projet</artifactId>
-	<version>1.0</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>gestion_projet</name>
 	<description>gestion_projet</description>
 
@@ -112,4 +112,19 @@
 
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<url>http://host.docker.internal:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<url>http://host.docker.internal:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+
+
 </project>
