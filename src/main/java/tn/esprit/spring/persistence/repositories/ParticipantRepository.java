@@ -9,16 +9,16 @@ import org.springframework.stereotype.Repository;
 
 import tn.esprit.spring.persistence.entities.Participant;
 import tn.esprit.spring.persistence.entities.Tache;
+
 @Repository
-public interface ParticipantRepository extends CrudRepository <Participant, Integer>{
+public interface ParticipantRepository extends CrudRepository<Participant, Integer> {
 
-	Participant findByNomAndPrenomAndTache(String nom, String prenom, Tache tache);
-	
-	@Query("SELECT p from Participant p join p.evenements evnts where evnts.dated>=?1")
-	List <Participant> participByDateEvent (Date datedeb);
-	
+    // Changed return type from Participant to List<Participant>
+    List<Participant> findByNomAndPrenomAndTache(String nom, String prenom, Tache tache);
 
-	@Query("SELECT DISTINCT p from Participant p join p.evenements evnts join evnts.logistiques logis where logis.reserve=?1 AND p.tache=?2")
-	List <Participant> participReservLogis (Boolean state,Tache tache);
+    @Query("SELECT p from Participant p join p.evenements evnts where evnts.dated>=?1")
+    List<Participant> participByDateEvent(Date datedeb);
 
+    @Query("SELECT DISTINCT p from Participant p join p.evenements evnts join evnts.logistiques logis where logis.reserve=?1 AND p.tache=?2")
+    List<Participant> participReservLogis(Boolean state, Tache tache);
 }
