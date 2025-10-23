@@ -46,7 +46,7 @@ public class LogistiqueServiceImpl implements ILogistiqueService {
 		}
 		
 		logistiqueRepository.save(l);
-		log.info("Logistique sauvegardée avec succès - ID: {}", l.getId());
+		log.info("Logistique sauvegardée avec succès - ID: {}", l.getIdlog());
 		
 		logis.add(l);
 		e.setLogistiques(logis);
@@ -77,7 +77,7 @@ public class LogistiqueServiceImpl implements ILogistiqueService {
 					if (l.isReserve()) {
 						allLogists.add(l);
 						logistiquesReservees++;
-						log.debug("Logistique réservée ajoutée - ID: {}", l.getId());
+						log.debug("Logistique réservée ajoutée - ID: {}", l.getIdlog());
 					}
 				}
 			}
