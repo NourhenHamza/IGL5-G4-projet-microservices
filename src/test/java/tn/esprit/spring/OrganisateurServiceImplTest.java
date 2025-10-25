@@ -13,7 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.persistence.entities.Organisateur;
 import tn.esprit.spring.service.classes.OrganisateurService;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "spring.datasource.url=jdbc:mysql://localhost:3306/gestionevenement",
+    "spring.datasource.username=root",
+    "spring.datasource.password=0000"
+})
 @Slf4j
 @Transactional
 @Rollback
