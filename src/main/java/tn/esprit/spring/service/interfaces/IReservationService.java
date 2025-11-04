@@ -1,4 +1,4 @@
-package tn.esprit.spring.services;
+package tn.esprit.spring.service.interfaces;
 
 import java.util.List;
 import tn.esprit.spring.persistence.entities.Reservation;

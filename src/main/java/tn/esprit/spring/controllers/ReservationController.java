@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.spring.persistence.entities.Reservation;
-import tn.esprit.spring.services.IReservationService;
+import tn.esprit.spring.service.interfaces.IReservationService;
 
 @RestController
 @RequestMapping("/reservation")

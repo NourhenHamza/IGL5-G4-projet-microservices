@@ -7,7 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.spring.persistence.entities.Reservation;
 import tn.esprit.spring.persistence.repositories.ReservationRepository;
-import tn.esprit.spring.services.ReservationServiceImpl;
+import tn.esprit.spring.service.classes.ReservationServiceImpl;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

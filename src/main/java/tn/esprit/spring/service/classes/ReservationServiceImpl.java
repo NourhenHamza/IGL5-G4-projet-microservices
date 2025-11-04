@@ -1,10 +1,11 @@
-package tn.esprit.spring.services;
+package tn.esprit.spring.service.classes;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.spring.persistence.entities.Reservation;
 import tn.esprit.spring.persistence.repositories.ReservationRepository;
+import tn.esprit.spring.service.interfaces.IReservationService;
 
 @Service
 public class ReservationServiceImpl implements IReservationService {
