@@ -16,7 +16,7 @@ public class Reservation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idReservation;
+    private Long idReservation;
 
     @Temporal(TemporalType.DATE)
     private Date dateReservation;

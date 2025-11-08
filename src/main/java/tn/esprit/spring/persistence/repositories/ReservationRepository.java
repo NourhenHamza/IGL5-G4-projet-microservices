@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import tn.esprit.spring.persistence.entities.Reservation;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 }

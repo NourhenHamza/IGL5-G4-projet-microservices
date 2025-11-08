@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tn.esprit.spring.persistence.entities.Reservation;
-import tn.esprit.spring.services.IReservationService;
+import tn.esprit.spring.service.interfaces.IReservationService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

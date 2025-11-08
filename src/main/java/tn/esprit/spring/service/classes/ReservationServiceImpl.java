@@ -21,15 +21,21 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public Reservation retrieveReservation(int idReservation) {
-        Reservation r = reservationRepository.findById(idReservation).orElse(null);
-        if (r != null) {
-            System.out.println("🔍 Réservation trouvée : ID = " + r.getIdReservation());
-        } else {
-            System.out.println(" Aucune réservation trouvée avec l’ID " + idReservation);
-        }
-        return r;
+    public Reservation retrieveReservation(long idReservation) {
+        return null;
     }
+
+    @Override
+     public Reservation retrieveReservation(Long idReservation) {
+         Reservation r = reservationRepository.findById(idReservation).orElse(null);
+         if (r != null) {
+             System.out.println("🔍 Réservation trouvée : ID = " + r.getIdReservation());
+         } else {
+             System.out.println(" Aucune réservation trouvée avec l’ID " + idReservation);
+         }
+         return r;
+     }
+
 
     @Override
     public Reservation addReservation(Reservation r) {
@@ -45,8 +51,10 @@ public class ReservationServiceImpl implements IReservationService {
         return updated;
     }
 
+
+
     @Override
-    public void deleteReservation(int idReservation) {
+    public void deleteReservation(Long idReservation) {
         reservationRepository.deleteById(idReservation);
         System.out.println(" Réservation supprimée (ID = " + idReservation + ")");
     }

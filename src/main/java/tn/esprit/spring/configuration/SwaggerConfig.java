@@ -1,4 +1,4 @@
-package tn.esprit.spring.configuration;
+/*package tn.esprit.spring.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,3 +18,4 @@ public class SwaggerConfig {
 
 	}
 
+*/

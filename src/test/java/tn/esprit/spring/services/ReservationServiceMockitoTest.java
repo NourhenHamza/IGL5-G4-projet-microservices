@@ -29,7 +29,7 @@ public class ReservationServiceMockitoTest {
     void testAddReservation() {
         // Création de la réservation
         Reservation r = new Reservation();
-        r.setIdReservation(1);
+        r.setIdReservation(1L);
         r.setDateReservation(new Date());
         r.setConfirme(true);
 
@@ -43,7 +43,7 @@ public class ReservationServiceMockitoTest {
     @Test
     void testRetrieveAllReservations() {
         List<Reservation> mockList = Arrays.asList(
-                new Reservation(1, new Date(), true, null, null)
+                new Reservation(1L, new Date(), true, null, null)
         );
         when(reservationRepository.findAll()).thenReturn(mockList);
 
@@ -55,7 +55,7 @@ public class ReservationServiceMockitoTest {
     @Test
     void testUpdateReservation() {
         Reservation r = new Reservation();
-        r.setIdReservation(2);
+        r.setIdReservation(2L);
         r.setDateReservation(new Date());
         r.setConfirme(false);
 
@@ -69,7 +69,7 @@ public class ReservationServiceMockitoTest {
     @Test
     void testDeleteReservation() {
         int id = 1;
-        reservationService.deleteReservation(id);
-        verify(reservationRepository, times(1)).deleteById(id);
+        reservationService.deleteReservation((long) id);
+        verify(reservationRepository, times(1)).deleteById((long) id);
     }
 }
