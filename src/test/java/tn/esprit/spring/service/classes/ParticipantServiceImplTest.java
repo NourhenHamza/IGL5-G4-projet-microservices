@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.persistence.entities.Participant;
@@ -16,6 +18,8 @@ import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 import tn.esprit.spring.service.interfaces.IParticipantService;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:application.properties")
+@Transactional
 @Slf4j
 public class ParticipantServiceImplTest {
 
