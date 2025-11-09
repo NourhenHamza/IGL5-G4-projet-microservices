@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.6</version>
+		<version>3.1.5</version>
 		<relativePath/>
 	</parent>
 	<groupId>tn.esprit.spring</groupId>
@@ -14,7 +14,9 @@
 	<name>gestion_projet</name>
 	<description>gestion_projet</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<sonar.projectKey>mon-projet-spring</sonar.projectKey>
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
 	</properties>
@@ -38,9 +40,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 		<dependency>
             <groupId>org.projectlombok</groupId>
@@ -60,6 +62,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<source>21</source>
+					<target>21</target>
 				</configuration>
 			</plugin>
 			<plugin>
