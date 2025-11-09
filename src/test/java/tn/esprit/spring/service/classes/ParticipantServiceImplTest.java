@@ -18,7 +18,12 @@ import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 import tn.esprit.spring.service.interfaces.IParticipantService;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application.properties")
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:testdb",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+})
 @Transactional
 @Slf4j
 public class ParticipantServiceImplTest {

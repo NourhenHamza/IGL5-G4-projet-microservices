@@ -9,20 +9,25 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.test.context.TestPropertySource;
 import tn.esprit.spring.persistence.entities.Participant;
 import tn.esprit.spring.persistence.entities.Tache;
 import tn.esprit.spring.persistence.repositories.EvenementRepository;
 import tn.esprit.spring.persistence.repositories.LogistiqueRepository;
 import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 
-@ExtendWith(MockitoExtension.class)
+
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:testdb",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+})
 public class ParticipantServiceMockitoTest {
 
     @Mock
