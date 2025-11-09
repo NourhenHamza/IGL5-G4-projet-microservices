@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,7 @@ import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 import tn.esprit.spring.service.interfaces.IParticipantService;
 
 @SpringBootTest
-@TestPropertySource(properties = {
-        "spring.datasource.url=jdbc:h2:mem:testdb",
-        "spring.datasource.driver-class-name=org.h2.Driver",
-        "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
-})
+@ActiveProfiles("test")
 @Transactional
 @Slf4j
 public class ParticipantServiceImplTest {
@@ -57,14 +52,12 @@ public class ParticipantServiceImplTest {
         p.setTache(Tache.INVITE);
         participantService.ajouterParticipant(p);
 
-        // Changed to return List instead of single Participant
         List<Participant> foundList = participantRepository.findByNomAndPrenomAndTache("Chakroun", "Eya", Tache.INVITE);
         log.info("✅ Participants trouvés : {}", foundList.size());
 
         assertNotNull(foundList);
         assertFalse(foundList.isEmpty(), "La liste ne devrait pas être vide");
 
-        // Get the first participant from the list
         Participant found = foundList.get(0);
         assertEquals("Chakroun", found.getNom());
         assertEquals("Eya", found.getPrenom());
