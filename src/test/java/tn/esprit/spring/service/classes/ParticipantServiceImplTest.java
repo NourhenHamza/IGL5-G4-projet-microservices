@@ -17,7 +17,7 @@ import tn.esprit.spring.persistence.entities.Tache;
 import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 import tn.esprit.spring.service.interfaces.IParticipantService;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
 @Transactional
 @Slf4j

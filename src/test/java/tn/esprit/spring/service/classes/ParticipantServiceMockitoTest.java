@@ -12,22 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.test.context.TestPropertySource;
 import tn.esprit.spring.persistence.entities.Participant;
 import tn.esprit.spring.persistence.entities.Tache;
 import tn.esprit.spring.persistence.repositories.EvenementRepository;
 import tn.esprit.spring.persistence.repositories.LogistiqueRepository;
 import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 
-
-@TestPropertySource(properties = {
-        "spring.datasource.url=jdbc:h2:mem:testdb",
-        "spring.datasource.driver-class-name=org.h2.Driver",
-        "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
-})
+// ✅ PAS de @SpringBootTest ici - Mockito pur
 public class ParticipantServiceMockitoTest {
 
     @Mock
@@ -47,7 +39,6 @@ public class ParticipantServiceMockitoTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // ✅ CREATE
     @Test
     void testAddParticipant() {
         Participant p = new Participant();
@@ -65,7 +56,6 @@ public class ParticipantServiceMockitoTest {
         verify(participantRepository, times(1)).save(p);
     }
 
-    // ✅ READ
     @Test
     void testFindParticipant() {
         Participant p = new Participant(1, "Chakroun", "Eya", Tache.INVITE, null);
@@ -78,7 +68,6 @@ public class ParticipantServiceMockitoTest {
         verify(participantRepository, times(1)).findById(1);
     }
 
-    // ✅ UPDATE
     @Test
     void testUpdateParticipant() {
         Participant existing = new Participant(1, "Sassi", "Khaled", Tache.ORGANISATEUR, null);
@@ -92,7 +81,6 @@ public class ParticipantServiceMockitoTest {
         verify(participantRepository, times(1)).save(updated);
     }
 
-    // ✅ DELETE
     @Test
     void testDeleteParticipant() {
         int id = 1;
@@ -103,7 +91,6 @@ public class ParticipantServiceMockitoTest {
         verify(participantRepository, times(1)).deleteById(id);
     }
 
-    // ✅ EXTRA: Test getParReservLogis()
     @Test
     void testGetParReservLogis() {
         List<Participant> mockList = new ArrayList<>();
