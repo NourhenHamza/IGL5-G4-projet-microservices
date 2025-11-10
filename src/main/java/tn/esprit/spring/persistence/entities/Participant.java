@@ -33,9 +33,10 @@ public class Participant implements Serializable {
     @Enumerated(EnumType.STRING)
     private Tache tache;
 
-    // ✅ FIXED: Added 'transient' keyword to resolve serialization issue (Line 36)
-    // SonarQube Rule: Make non-static "evenements" private or transient
+    // ✅ FIXED: Made the field explicitly private to resolve SonarQube serialization issue
+    // SonarQube Rule: "Make non-static 'evenements' private or transient"
+    // Solution: Made it private (NOT transient) to keep JPA query functionality
     @ManyToMany(mappedBy = "participants")
     @JsonIgnore
-    transient List<Evenement> evenements;
+    private List<Evenement> evenements;
 }
