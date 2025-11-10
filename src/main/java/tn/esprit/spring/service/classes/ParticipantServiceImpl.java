@@ -2,13 +2,12 @@ package tn.esprit.spring.service.classes;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.persistence.entities.Evenement;
-import tn.esprit.spring.persistence.entities.Logistique;
 import tn.esprit.spring.persistence.entities.Participant;
 import tn.esprit.spring.persistence.entities.Tache;
 import tn.esprit.spring.persistence.repositories.EvenementRepository;
@@ -18,21 +17,18 @@ import tn.esprit.spring.service.interfaces.IParticipantService;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor  // ✅ Lombok generates constructor
 public class ParticipantServiceImpl implements IParticipantService {
 
-    @Autowired
-    ParticipantRepository partRep;
-
-    @Autowired
-    EvenementRepository eventRep;
-
-    @Autowired
-    LogistiqueRepository logisRep;
+    // ✅ Constructor injection via final fields
+    private final ParticipantRepository partRep;
+    private final EvenementRepository eventRep;
+    private final LogistiqueRepository logisRep;
 
     @Override
     public Participant ajouterParticipant(Participant p) {
         log.info("=== Début de la méthode ajouterParticipant ===");
-        log.info("Ajout d’un nouveau participant : Nom = {}, Prénom = {}, Tâche = {}",
+        log.info("Ajout d'un nouveau participant : Nom = {}, Prénom = {}, Tâche = {}",
                 p.getNom(), p.getPrenom(), p.getTache());
 
         partRep.save(p);
@@ -41,7 +37,6 @@ public class ParticipantServiceImpl implements IParticipantService {
         log.info("=== Fin de la méthode ajouterParticipant ===");
         return p;
     }
-
 
     @Override
     @Scheduled(fixedRate = 60000)
@@ -53,7 +48,7 @@ public class ParticipantServiceImpl implements IParticipantService {
         if (evenements.isEmpty()) {
             log.info("Aucun événement trouvé dans la base de données.");
         } else {
-            log.info("Nombre d’événements trouvés : {}", evenements.size());
+            log.info("Nombre d'événements trouvés : {}", evenements.size());
         }
 
         for (Evenement ev : evenements) {
@@ -61,14 +56,13 @@ public class ParticipantServiceImpl implements IParticipantService {
             cout += coutEvent;
             ev.setCout(cout);
             eventRep.save(ev);
-            log.info("Mise à jour du coût pour l’événement (ID: {}, Description: {}). Nouveau coût: {}",
+            log.info("Mise à jour du coût pour l'événement (ID: {}, Description: {}). Nouveau coût: {}",
                     ev.getId(), ev.getDescription(), cout);
         }
 
         log.info("Coût total calculé pour tous les événements : {}", cout);
         log.info("=== Fin de la méthode calculCout ===");
     }
-
 
     @Override
     public List<Participant> getParReservLogis() {

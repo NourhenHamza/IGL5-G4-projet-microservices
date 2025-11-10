@@ -41,8 +41,8 @@ public class Evenement implements Serializable {
 	private Date datef;
 	private float cout;
 	@ManyToMany
-	List <Participant> participants;
+    private List <Participant> participants;
 	@OneToMany
 	@JsonIgnore
-	List <Logistique> logistiques;
+    private List <Logistique> logistiques;
 }
