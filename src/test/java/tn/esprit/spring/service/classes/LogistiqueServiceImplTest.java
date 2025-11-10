@@ -1,6 +1,6 @@
 package tn.esprit.spring.service.classes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import tn.esprit.spring.service.interfaces.ILogistiqueService;
 // ============================================
 // TESTS SANS MOCKITO (avec vraie base de données)
 // ============================================
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
 @Transactional
@@ -227,7 +227,7 @@ public class LogistiqueServiceImplTest {
 // ============================================
 // TESTS AVEC MOCKITO (sans base de données)
 // ============================================
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
 class LogistiqueServiceImplMockTest {
