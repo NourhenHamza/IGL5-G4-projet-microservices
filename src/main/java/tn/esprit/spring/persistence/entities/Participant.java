@@ -19,19 +19,24 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class Participant implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_part")
     private int idPart;
-	private String nom;
-	private String prenom;
-	@Enumerated (EnumType.STRING)
-	private Tache tache;
-	@ManyToMany(mappedBy = "participants")
-	@JsonIgnore
-	List <Evenement> evenements;
+
+    private String nom;
+    private String prenom;
+
+    @Enumerated(EnumType.STRING)
+    private Tache tache;
+
+    // ✅ FIXED: Made the field explicitly private to resolve SonarQube serialization issue
+    // SonarQube Rule: "Make non-static 'evenements' private or transient"
+    // Solution: Made it private (NOT transient) to keep JPA query functionality
+    @ManyToMany(mappedBy = "participants")
+    @JsonIgnore
+    private List<Evenement> evenements;
 }

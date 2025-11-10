@@ -32,8 +32,8 @@ public class ParticipantServiceImpl implements IParticipantService {
     @Override
     public Participant ajouterParticipant(Participant p) {
         log.info("=== Début de la méthode ajouterParticipant ===");
-        log.info("Ajout d’un nouveau participant : Nom = {}, Prénom = {}, Tâche = {}", 
-                 p.getNom(), p.getPrenom(), p.getTache());
+        log.info("Ajout d’un nouveau participant : Nom = {}, Prénom = {}, Tâche = {}",
+                p.getNom(), p.getPrenom(), p.getTache());
 
         partRep.save(p);
 
@@ -42,7 +42,7 @@ public class ParticipantServiceImpl implements IParticipantService {
         return p;
     }
 
-    
+
     @Override
     @Scheduled(fixedRate = 60000)
     public void calculCout() {
@@ -62,7 +62,7 @@ public class ParticipantServiceImpl implements IParticipantService {
             ev.setCout(cout);
             eventRep.save(ev);
             log.info("Mise à jour du coût pour l’événement (ID: {}, Description: {}). Nouveau coût: {}",
-                     ev.getId(), ev.getDescription(), cout);
+                    ev.getId(), ev.getDescription(), cout);
         }
 
         log.info("Coût total calculé pour tous les événements : {}", cout);
