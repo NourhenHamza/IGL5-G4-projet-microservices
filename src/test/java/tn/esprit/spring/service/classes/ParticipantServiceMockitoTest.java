@@ -19,7 +19,6 @@ import tn.esprit.spring.persistence.repositories.EvenementRepository;
 import tn.esprit.spring.persistence.repositories.LogistiqueRepository;
 import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 
-// ✅ PAS de @SpringBootTest ici - Mockito pur
 public class ParticipantServiceMockitoTest {
 
     @Mock
@@ -70,7 +69,10 @@ public class ParticipantServiceMockitoTest {
 
     @Test
     void testUpdateParticipant() {
-        Participant existing = new Participant(1, "Sassi", "Khaled", Tache.ORGANISATEUR, null);
+        // ✅ FIXED: Removed useless assignment to local variable "existing"
+        // SonarQube Rule: Remove useless assignment to local variable
+        // Original code had: Participant existing = new Participant(...); which was never used
+
         Participant updated = new Participant(1, "Sassi", "Mohamed", Tache.ORGANISATEUR, null);
 
         when(participantRepository.save(updated)).thenReturn(updated);
@@ -105,3 +107,5 @@ public class ParticipantServiceMockitoTest {
         verify(participantRepository, times(1)).participReservLogis(true, Tache.ORGANISATEUR);
     }
 }
+
+

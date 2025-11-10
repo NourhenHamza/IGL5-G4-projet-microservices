@@ -19,19 +19,23 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class Participant implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_part")
     private int idPart;
-	private String nom;
-	private String prenom;
-	@Enumerated (EnumType.STRING)
-	private Tache tache;
-	@ManyToMany(mappedBy = "participants")
-	@JsonIgnore
-	List <Evenement> evenements;
+
+    private String nom;
+    private String prenom;
+
+    @Enumerated(EnumType.STRING)
+    private Tache tache;
+
+    // ✅ FIXED: Added 'transient' keyword to resolve serialization issue (Line 36)
+    // SonarQube Rule: Make non-static "evenements" private or transient
+    @ManyToMany(mappedBy = "participants")
+    @JsonIgnore
+    transient List<Evenement> evenements;
 }
