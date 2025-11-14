@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.esprit.spring.dto.EvenementDTO;
+import tn.esprit.spring.dto.LogistiqueDTO;
+import tn.esprit.spring.dto.ParticipantDTO;
 import tn.esprit.spring.persistence.entities.Evenement;
 import tn.esprit.spring.persistence.entities.Logistique;
 import tn.esprit.spring.persistence.entities.Participant;
