@@ -22,15 +22,14 @@ public class LogistiqueServiceImpl implements ILogistiqueService {
 	@Autowired
 	LogistiqueRepository logistiqueRepository;
 	
-	
 	@Override
-	public Logistique ajoutAffectLogEven(Logistique l, String description_evnm) {
-		log.info("Début de l'ajout et affectation de logistique pour l'événement: {}", description_evnm);
+	public Logistique ajoutAffectLogEven(Logistique l, String descriptionEvnm) { // Changed parameter name
+		log.info("Début de l'ajout et affectation de logistique pour l'événement: {}", descriptionEvnm);
 		
-		Evenement e = evenRep.findByDescription(description_evnm);
+		Evenement e = evenRep.findByDescription(descriptionEvnm);
 		
 		if (e == null) {
-			log.error("Événement non trouvé avec la description: {}", description_evnm);
+			log.error("Événement non trouvé avec la description: {}", descriptionEvnm);
 			return null;
 		}
 		
@@ -57,10 +56,10 @@ public class LogistiqueServiceImpl implements ILogistiqueService {
 	}
 
 	@Override
-	public List<Logistique> getLogistiquesDates(Date dated, Date datef) {
-		log.info("Récupération des logistiques réservées entre {} et {}", dated, datef);
+	public List<Logistique> getLogistiquesDates(Date dateDebut, Date dateFin) { // Changed parameter names
+		log.info("Récupération des logistiques réservées entre {} et {}", dateDebut, dateFin);
 		
-		List<Evenement> events = evenRep.findByDatedBetween(dated, datef);
+		List<Evenement> events = evenRep.findByDatedBetween(dateDebut, dateFin);
 		log.info("Nombre d'événements trouvés dans cette période: {}", events.size());
 		
 		List<Logistique> allLogists = new ArrayList<>();
