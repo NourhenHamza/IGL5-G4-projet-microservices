@@ -15,13 +15,9 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -41,8 +37,8 @@ public class Evenement implements Serializable {
 	private Date datef;
 	private float cout;
 	@ManyToMany
-	List <Participant> participants;
+    private List <Participant> participants;
 	@OneToMany
 	@JsonIgnore
-	List <Logistique> logistiques;
+    private List <Logistique> logistiques;
 }
