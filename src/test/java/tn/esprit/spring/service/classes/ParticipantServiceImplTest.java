@@ -32,7 +32,7 @@ public class ParticipantServiceImplTest {
     ParticipantRepository participantRepository;
 
     @Test
-    public void testAddParticipant() throws ParseException {
+     void testAddParticipant() throws ParseException {
         log.info("=== Test: Ajout d'un participant ===");
 
         Participant p = new Participant();
@@ -52,7 +52,7 @@ public class ParticipantServiceImplTest {
     }
 
     @Test
-    public void testRetrieveParticipant() {
+     void testRetrieveParticipant() {
         log.info("=== Test: Recherche d'un participant ===");
 
         Participant p = new Participant();
@@ -80,7 +80,7 @@ public class ParticipantServiceImplTest {
     }
 
     @Test
-    public void testUpdateParticipant() {
+     void testUpdateParticipant() {
         log.info("=== Test: Mise à jour d'un participant ===");
 
         Participant p = new Participant();
@@ -106,7 +106,7 @@ public class ParticipantServiceImplTest {
     }
 
     @Test
-    public void testDeleteParticipant() {
+     void testDeleteParticipant() {
         log.info("=== Test: Suppression d'un participant ===");
 
         Participant p = new Participant();
