@@ -12,43 +12,43 @@ import tn.esprit.spring.persistence.entities.Participant;
 import tn.esprit.spring.persistence.repositories.EvenementRepository;
 import tn.esprit.spring.persistence.repositories.ParticipantRepository;
 import tn.esprit.spring.service.interfaces.IEvenemntService;
+
 @Service
 @Slf4j
-public class EvenementServiceImpl implements IEvenemntService{
-@Autowired
-ParticipantRepository partRep;
-@Autowired
-EvenementRepository evenRep ;
-//1ère méthode d'affectation avec la signature Evenement ajoutAffectEvenParticip(Evenement e, int idParticip)
+public class EvenementServiceImpl implements IEvenemntService {
+	@Autowired
+	ParticipantRepository partRep;
+	@Autowired
+	EvenementRepository evenRep;
+
+	// 1ère méthode d'affectation avec la signature Evenement ajoutAffectEvenParticip(Evenement e, int idParticip)
 	@Override
 	public Evenement ajoutAffectEvenParticip(Evenement e, int idParticip) {
-		Participant p= partRep.findById(idParticip).get();
-		Evenement savedEvent=evenRep.findById(e.getId()).get();
+		// Fix: Check if Optional is present before calling get()
+		Participant p = partRep.findById(idParticip)
+				.orElseThrow(() -> new RuntimeException("Participant non trouvé avec l'ID: " + idParticip));
+		
+		Evenement savedEvent = evenRep.findById(e.getId())
+				.orElse(null);
+		
 		List<Participant> pts;
 		
-		if(savedEvent.getParticipants() == null){
-			pts=new ArrayList<>();
+		if (savedEvent == null || savedEvent.getParticipants() == null) {
+			pts = new ArrayList<>();
+		} else {
+			pts = savedEvent.getParticipants();
 		}
-		else 
-			{pts= savedEvent.getParticipants();}
 
-			pts.add(p);
-			e.setParticipants(pts);
+		pts.add(p);
+		e.setParticipants(pts);
 		evenRep.save(e);
 		return e;
 	}
-	
 
-//2ème méthode d'affectation avec la signature: Evenement ajoutAffectEvenParticip(Evenement e)
-
+	// 2ème méthode d'affectation avec la signature: Evenement ajoutAffectEvenParticip(Evenement e)
 	@Override
 	public Evenement ajoutAffectEvenParticip(Evenement e) {
-			evenRep.save(e);
-			return e;
-		}
+		evenRep.save(e);
+		return e;
 	}
-	
-	
-
-	
-
+}

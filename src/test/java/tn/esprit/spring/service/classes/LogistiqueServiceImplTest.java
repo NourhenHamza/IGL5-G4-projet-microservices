@@ -1,7 +1,7 @@
 package tn.esprit.spring.service.classes;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.text.ParseException;
@@ -27,9 +27,6 @@ import tn.esprit.spring.persistence.repositories.EvenementRepository;
 import tn.esprit.spring.persistence.repositories.LogistiqueRepository;
 import tn.esprit.spring.service.interfaces.ILogistiqueService;
 
-// ============================================
-// TESTS SANS MOCKITO (avec vraie base de données)
-// ============================================
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
@@ -45,15 +42,10 @@ public class LogistiqueServiceImplTest {
     @Autowired
     EvenementRepository evenementRepository;
 
-    /**
-     * Test 1 : Ajouter une logistique et l'affecter à un événement
-     * @Transactional fait automatiquement un rollback - pas besoin de nettoyage manuel
-     */
     @Test
-    public void testAddLogistique() throws ParseException {
+    void testAddLogistique() throws ParseException { // Removed public
         log.info("=== Début du test d'ajout de logistique ===");
         
-        // Créer un événement avec un nom unique
         String uniqueEventName = "Festival_Add_" + UUID.randomUUID().toString();
         Evenement event = new Evenement();
         event.setDescription(uniqueEventName);
@@ -62,17 +54,14 @@ public class LogistiqueServiceImplTest {
         event.setCout(1000.0f);
         evenementRepository.save(event);
         
-        // Créer une logistique
         Logistique logistique = new Logistique();
         logistique.setDescription("Tente de camping");
         logistique.setReserve(true);
         logistique.setPrix(150.5f);
         logistique.setQuantite(10);
         
-        // Sauvegarder et affecter
         Logistique savedLogistique = logistiqueService.ajoutAffectLogEven(logistique, uniqueEventName);
         
-        // Vérifications
         assertNotNull(savedLogistique);
         assertTrue(savedLogistique.getIdlog() > 0);
         assertEquals("Tente de camping", savedLogistique.getDescription());
@@ -85,14 +74,10 @@ public class LogistiqueServiceImplTest {
         log.info("=== Fin du test d'ajout de logistique (rollback automatique) ===");
     }
 
-    /**
-     * Test 2 : Récupérer une logistique par ID
-     */
     @Test
-    public void testGetLogistiqueById() throws ParseException {
+    void testGetLogistiqueById() throws ParseException { // Removed public
         log.info("=== Début du test de récupération de logistique par ID ===");
         
-        // Créer un événement avec un nom unique
         String uniqueEventName = "Festival_Get_" + UUID.randomUUID().toString();
         Evenement event = new Evenement();
         event.setDescription(uniqueEventName);
@@ -101,7 +86,6 @@ public class LogistiqueServiceImplTest {
         event.setCout(500.0f);
         evenementRepository.save(event);
         
-        // Créer une logistique
         Logistique logistique = new Logistique();
         logistique.setDescription("Chaise pliante");
         logistique.setReserve(false);
@@ -111,10 +95,8 @@ public class LogistiqueServiceImplTest {
         Logistique savedLogistique = logistiqueService.ajoutAffectLogEven(logistique, uniqueEventName);
         int logistiqueId = savedLogistique.getIdlog();
         
-        // Récupérer par ID
         Optional<Logistique> foundLogistique = logistiqueRepository.findById(logistiqueId);
         
-        // Vérifications
         assertTrue(foundLogistique.isPresent());
         assertEquals("Chaise pliante", foundLogistique.get().getDescription());
         assertEquals(25.0f, foundLogistique.get().getPrix(), 0.001);
@@ -124,14 +106,10 @@ public class LogistiqueServiceImplTest {
         log.info("=== Fin du test de récupération (rollback automatique) ===");
     }
 
-    /**
-     * Test 3 : Mettre à jour une logistique
-     */
     @Test
-    public void testUpdateLogistique() throws ParseException {
+    void testUpdateLogistique() throws ParseException { // Removed public
         log.info("=== Début du test de mise à jour de logistique ===");
         
-        // Créer un événement avec un nom unique
         String uniqueEventName = "Festival_Update_" + UUID.randomUUID().toString();
         Evenement event = new Evenement();
         event.setDescription(uniqueEventName);
@@ -140,7 +118,6 @@ public class LogistiqueServiceImplTest {
         event.setCout(800.0f);
         evenementRepository.save(event);
         
-        // Création initiale
         Logistique logistique = new Logistique();
         logistique.setDescription("Table basse");
         logistique.setReserve(true);
@@ -149,12 +126,10 @@ public class LogistiqueServiceImplTest {
         
         Logistique savedLogistique = logistiqueService.ajoutAffectLogEven(logistique, uniqueEventName);
         
-        // Modification
         savedLogistique.setPrix(85.0f);
         savedLogistique.setQuantite(25);
         Logistique updatedLogistique = logistiqueRepository.save(savedLogistique);
         
-        // Vérifications
         assertEquals(85.0f, updatedLogistique.getPrix(), 0.001);
         assertEquals(25, updatedLogistique.getQuantite());
         assertEquals("Table basse", updatedLogistique.getDescription());
@@ -165,14 +140,10 @@ public class LogistiqueServiceImplTest {
         log.info("=== Fin du test de mise à jour (rollback automatique) ===");
     }
 
-    /**
-     * Test 4 : Supprimer une logistique
-     */
     @Test
-    public void testDeleteLogistique() throws ParseException {
+    void testDeleteLogistique() throws ParseException { // Removed public
         log.info("=== Début du test de suppression de logistique ===");
         
-        // Créer un événement avec un nom unique
         String uniqueEventName = "Festival_Delete_" + UUID.randomUUID().toString();
         Evenement event = new Evenement();
         event.setDescription(uniqueEventName);
@@ -181,7 +152,6 @@ public class LogistiqueServiceImplTest {
         event.setCout(600.0f);
         evenementRepository.save(event);
         
-        // Créer une logistique à supprimer
         Logistique logistique = new Logistique();
         logistique.setDescription("Éclairage LED");
         logistique.setReserve(true);
@@ -191,24 +161,18 @@ public class LogistiqueServiceImplTest {
         Logistique savedLogistique = logistiqueService.ajoutAffectLogEven(logistique, uniqueEventName);
         int logistiqueId = savedLogistique.getIdlog();
         
-        // Vérifier que la logistique existe
         assertTrue(logistiqueRepository.findById(logistiqueId).isPresent());
         
-        // Supprimer
         logistiqueRepository.deleteById(logistiqueId);
         
-        // Vérifier la suppression
         assertFalse(logistiqueRepository.findById(logistiqueId).isPresent());
         
         log.info("Logistique supprimée avec succès - ID: {}", logistiqueId);
         log.info("=== Fin du test de suppression (rollback automatique) ===");
     }
 
-    /**
-     * Test bonus : Récupérer les logistiques par dates
-     */
     @Test
-    public void testGetLogistiquesDates() throws ParseException {
+    void testGetLogistiquesDates() throws ParseException { // Removed public
         log.info("=== Début du test de récupération des logistiques par dates ===");
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -224,9 +188,6 @@ public class LogistiqueServiceImplTest {
     }
 }
 
-// ============================================
-// TESTS AVEC MOCKITO (sans base de données)
-// ============================================
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
@@ -241,14 +202,10 @@ class LogistiqueServiceImplMockTest {
     @MockBean
     private EvenementRepository evenementRepository;
 
-    /**
-     * Test 1 Mockito : Ajouter une logistique
-     */
     @Test
-    public void testAddLogistiqueWithMock() throws ParseException {
+    void testAddLogistiqueWithMock() throws ParseException { // Removed public
         log.info("=== Début du test Mockito d'ajout de logistique ===");
         
-        // Arrange - Préparer les données
         Logistique logistique = new Logistique();
         logistique.setIdlog(1);
         logistique.setDescription("Tente de camping");
@@ -261,15 +218,12 @@ class LogistiqueServiceImplMockTest {
         event.setDescription("Festival Test Mock");
         event.setLogistiques(new ArrayList<>());
         
-        // Configurer les mocks
         when(evenementRepository.findByDescription("Festival Test Mock")).thenReturn(event);
         when(logistiqueRepository.save(any(Logistique.class))).thenReturn(logistique);
         when(evenementRepository.save(any(Evenement.class))).thenReturn(event);
         
-        // Act - Exécuter la méthode à tester
         Logistique result = logistiqueService.ajoutAffectLogEven(logistique, "Festival Test Mock");
         
-        // Assert - Vérifier les résultats
         assertNotNull(result);
         assertEquals("Tente de camping", result.getDescription());
         assertEquals(150.5f, result.getPrix(), 0.001);
@@ -280,14 +234,10 @@ class LogistiqueServiceImplMockTest {
         log.info("=== Fin du test Mockito d'ajout ===");
     }
 
-    /**
-     * Test 2 Mockito : Récupérer une logistique par ID
-     */
     @Test
-    public void testGetLogistiqueByIdWithMock() {
+    void testGetLogistiqueByIdWithMock() { // Removed public
         log.info("=== Début du test Mockito de récupération par ID ===");
         
-        // Arrange
         Logistique logistique = new Logistique();
         logistique.setIdlog(1);
         logistique.setDescription("Chaise pliante");
@@ -296,10 +246,8 @@ class LogistiqueServiceImplMockTest {
         
         when(logistiqueRepository.findById(1)).thenReturn(Optional.of(logistique));
         
-        // Act
         Optional<Logistique> found = logistiqueRepository.findById(1);
         
-        // Assert
         assertTrue(found.isPresent());
         assertEquals("Chaise pliante", found.get().getDescription());
         assertEquals(25.0f, found.get().getPrix(), 0.001);
@@ -309,14 +257,10 @@ class LogistiqueServiceImplMockTest {
         log.info("=== Fin du test Mockito de récupération ===");
     }
 
-    /**
-     * Test 3 Mockito : Mettre à jour une logistique
-     */
     @Test
-    public void testUpdateLogistiqueWithMock() {
+    void testUpdateLogistiqueWithMock() { // Removed public
         log.info("=== Début du test Mockito de mise à jour ===");
         
-        // Arrange
         Logistique logistique = new Logistique();
         logistique.setIdlog(1);
         logistique.setDescription("Table basse");
@@ -331,10 +275,8 @@ class LogistiqueServiceImplMockTest {
         
         when(logistiqueRepository.save(any(Logistique.class))).thenReturn(updatedLogistique);
         
-        // Act
         Logistique result = logistiqueRepository.save(logistique);
         
-        // Assert
         assertNotNull(result);
         assertEquals(85.0f, result.getPrix(), 0.001);
         assertEquals(25, result.getQuantite());
@@ -344,35 +286,25 @@ class LogistiqueServiceImplMockTest {
         log.info("=== Fin du test Mockito de mise à jour ===");
     }
 
-    /**
-     * Test 4 Mockito : Supprimer une logistique
-     */
     @Test
-    public void testDeleteLogistiqueWithMock() {
+    void testDeleteLogistiqueWithMock() { // Removed public
         log.info("=== Début du test Mockito de suppression ===");
         
-        // Arrange
         int logistiqueId = 1;
         doNothing().when(logistiqueRepository).deleteById(logistiqueId);
         
-        // Act
         logistiqueRepository.deleteById(logistiqueId);
         
-        // Assert
         verify(logistiqueRepository, times(1)).deleteById(logistiqueId);
         
         log.info("Test Mockito réussi - Logistique supprimée avec ID: {}", logistiqueId);
         log.info("=== Fin du test Mockito de suppression ===");
     }
 
-    /**
-     * Test bonus Mockito : Récupérer les logistiques par dates
-     */
     @Test
-    public void testGetLogistiquesDatesWithMock() throws ParseException {
+    void testGetLogistiquesDatesWithMock() throws ParseException { // Removed public
         log.info("=== Début du test Mockito de récupération par dates ===");
         
-        // Arrange
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date dateDebut = dateFormat.parse("01/01/2023");
         Date dateFin = dateFormat.parse("31/12/2023");
@@ -397,10 +329,8 @@ class LogistiqueServiceImplMockTest {
         
         when(evenementRepository.findByDatedBetween(dateDebut, dateFin)).thenReturn(events);
         
-        // Act
         List<Logistique> result = logistiqueService.getLogistiquesDates(dateDebut, dateFin);
         
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertTrue(result.get(0).isReserve());

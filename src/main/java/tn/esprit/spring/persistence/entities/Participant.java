@@ -1,7 +1,6 @@
 package tn.esprit.spring.persistence.entities;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -25,18 +24,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class Participant implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idPart;
 	private String nom;
 	private String prenom;
-	@Enumerated (EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	private Tache tache;
 	@ManyToMany(mappedBy = "participants")
 	@JsonIgnore
-	List <Evenement> evenements;
+	private List<Evenement> evenements; // Added private
 }
