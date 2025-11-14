@@ -17,10 +17,9 @@ import tn.esprit.spring.service.interfaces.IParticipantService;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor  // ✅ Lombok generates constructor
+@RequiredArgsConstructor
 public class ParticipantServiceImpl implements IParticipantService {
 
-    // ✅ Constructor injection via final fields
     private final ParticipantRepository partRep;
     private final EvenementRepository eventRep;
     private final LogistiqueRepository logisRep;
