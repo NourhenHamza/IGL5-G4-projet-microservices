@@ -19,6 +19,7 @@ import tn.esprit.spring.dto.ParticipantDTO;
 import tn.esprit.spring.persistence.entities.Evenement;
 import tn.esprit.spring.persistence.entities.Logistique;
 import tn.esprit.spring.persistence.entities.Participant;
+import tn.esprit.spring.persistence.entities.Tache;
 import tn.esprit.spring.service.interfaces.IEvenemntService;
 import tn.esprit.spring.service.interfaces.ILogistiqueService;
 import tn.esprit.spring.service.interfaces.IParticipantService;
@@ -95,19 +96,23 @@ public class GestionEvenementController {
 	// Conversion methods
 	private ParticipantDTO convertToDTO(Participant p) {
 		ParticipantDTO dto = new ParticipantDTO();
-		dto.setIdParticipant(p.getIdParticipant());
+		dto.setIdParticipant(p.getIdPart()); // Fixed: was getIdParticipant()
 		dto.setNom(p.getNom());
 		dto.setPrenom(p.getPrenom());
-		dto.setTache(p.getTache());
+		// Fixed: Tache is an enum, convert to String
+		dto.setTache(p.getTache() != null ? p.getTache().name() : null);
 		return dto;
 	}
 	
 	private Participant convertToEntity(ParticipantDTO dto) {
 		Participant p = new Participant();
-		p.setIdParticipant(dto.getIdParticipant());
+		p.setIdPart(dto.getIdParticipant()); // Fixed: was setIdParticipant()
 		p.setNom(dto.getNom());
 		p.setPrenom(dto.getPrenom());
-		p.setTache(dto.getTache());
+		// Fixed: Convert String to Tache enum
+		if (dto.getTache() != null && !dto.getTache().isEmpty()) {
+			p.setTache(Tache.valueOf(dto.getTache()));
+		}
 		return p;
 	}
 	
