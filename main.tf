@@ -9,7 +9,7 @@ resource "aws_vpc" "my_vpc" {
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "eks-cluster-sg-${var.cluster_name}"
   description = "Security group for EKS cluster ${var.cluster_name}"
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = "vpc-023c1503d8bb38381"
 
   ingress {
     from_port   = 8083
@@ -70,7 +70,6 @@ resource "aws_security_group" "eks_worker_sg" {
 
 resource "aws_eks_cluster" "my_cluster" {
   name     = var.cluster_name
-  role_arn = var.role_arn
   version  = "1.30"
 
   vpc_config {
@@ -82,7 +81,6 @@ resource "aws_eks_cluster" "my_cluster" {
 resource "aws_eks_node_group" "my_node_group" {
   cluster_name    = aws_eks_cluster.my_cluster.name
   node_group_name = "noeud1"
-  node_role_arn   = var.role_arn
   subnet_ids      = var.subnet_ids
 
   scaling_config {
@@ -91,4 +89,5 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
