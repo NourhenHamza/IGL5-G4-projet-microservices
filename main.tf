@@ -9,7 +9,7 @@ resource "aws_vpc" "my_vpc" {
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "eks-cluster-sg-${var.cluster_name}"
   description = "Security group for EKS cluster ${var.cluster_name}"
-  vpc_id      = var.vpc_id  # Utilisation de la variable pour l'ID du VPC
+  vpc_id = aws_vpc.my_vpc.id
 
   ingress {
     from_port   = 8083
@@ -91,3 +91,4 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
