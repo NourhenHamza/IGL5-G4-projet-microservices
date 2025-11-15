@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring_app'
+    static_configs:
+      - targets: ['spring_app:8082']  # Use the Docker container name and internal port
