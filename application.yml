@@ -1,0 +1,17 @@
+server:
+  port: 8082              # 🔹 Doit correspondre au containerPort du Deployment
+  address: 0.0.0.0        # 🔹 Écoute sur toutes les interfaces réseau
+
+spring:
+  application:
+    name: springboot-app   # 🔹 Même nom que dans le Deployment et Service
+
+  datasource:
+    url: jdbc:mysql://mysql-container:3306/gestiondb?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root123
+
+  profiles:
+    active: prod
+
+
