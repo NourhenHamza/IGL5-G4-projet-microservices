@@ -81,7 +81,7 @@ resource "aws_eks_cluster" "my_cluster" {
 
 resource "aws_eks_node_group" "my_node_group" {
   cluster_name    = aws_eks_cluster.my_cluster.name
-  role_arn = aws_iam_role.eks_role.arn
+  node_role_arn   = aws_iam_role.eks_role.arn
   node_group_name = "noeud1"
   subnet_ids      = var.subnet_ids
 
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
 
 
