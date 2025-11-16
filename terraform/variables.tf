@@ -1,6 +1,6 @@
 variable "aws_region" {
   description = "AWS region"
-  default     = "eu-west-1"
+  default     = "eu-east-1"
 }
 
 variable "aws_access_key" {
@@ -11,6 +11,12 @@ variable "aws_access_key" {
 variable "aws_secret_key" {
   description = "AWS secret key"
   type        = string
+}
+
+variable "aws_session_token" {
+  description = "AWS session token"
+  type        = string
+  default     = ""
 }
 
 variable "project_name" {
