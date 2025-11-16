@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 #resource "aws_vpc" "my_vpc" {
- # cidr_block = var.vpc_cidr  # Utilisation de la variable pour le CIDR
+ # cidr_block = var.vpc_cidr 
 #}
 
 resource "aws_security_group" "eks_cluster_sg" {
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
 
 
