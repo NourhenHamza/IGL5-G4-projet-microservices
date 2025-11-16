@@ -1,7 +1,3 @@
-variable "project_name" {
-  default = "spring-app"
-}
-
 provider "aws" {
   region = "us-east-1"
 }
