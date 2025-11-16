@@ -70,7 +70,7 @@ resource "aws_security_group" "eks_worker_sg" {
 
 resource "aws_eks_cluster" "my_cluster" {
   name     = var.cluster_name
-  role_arn = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108-LabEksClusterRole-jSn8OKxMTznF"
+  role_arn = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108-LabEksClusterRole-3uOL4gsHYGSD"
   version  = "1.30"
 
   vpc_config {
@@ -81,7 +81,7 @@ resource "aws_eks_cluster" "my_cluster" {
 
 resource "aws_eks_node_group" "my_node_group" {
   cluster_name    = aws_eks_cluster.my_cluster.name
-  node_role_arn   = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108509-LabEksNodeRole-fnZS4RyuAjj3"
+  node_role_arn   = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108509-LabEksNodeRole-vz5B9z3TZSbR"
   node_group_name = "noeud1"
   subnet_ids      = var.subnet_ids
 
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
 
 
