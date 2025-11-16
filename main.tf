@@ -9,7 +9,7 @@ provider "aws" {
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "eks-cluster-sg-${var.cluster_name}"
   description = "Security group for EKS cluster ${var.cluster_name}"
-  vpc_id = "vpc-023c1503d8bb38381"
+  vpc_id = "vpc-0a69a066bd9153889"
 
   ingress {
     from_port   = 8083
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
 
 
