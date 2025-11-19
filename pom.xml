@@ -9,7 +9,7 @@
     <!-- Project Info -->
     <groupId>tn.esprit.spring</groupId>
     <artifactId>gestion_projet</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Gestion Projet Spring Boot</name>
 
