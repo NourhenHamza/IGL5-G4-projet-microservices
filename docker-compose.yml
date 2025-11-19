@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  mysql-db:
+    image: mysql:8.0
+    container_name: gestion-evenement-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: gestionevenement
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - spring-mysql-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      timeout: 20s
+      retries: 10
+
+  # Spring Boot Application Service
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestion-evenement-app
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      # Database Configuration - using mysql-db as hostname
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/gestionevenement?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - spring-mysql-network
+
+volumes:
+  mysql-data:
+
+networks:
+  spring-mysql-network:
+    driver: bridge
