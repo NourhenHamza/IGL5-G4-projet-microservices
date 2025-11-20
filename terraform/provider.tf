@@ -8,7 +8,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.23" # Added Kubernetes provider requirement for EKS deployment
+      version = "~> 2.23" 
     }
 
   }
