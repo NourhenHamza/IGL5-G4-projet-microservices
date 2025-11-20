@@ -1,0 +1,65 @@
+# Prometheus Configuration for Your DevOps Project
+# Monitoring: Jenkins, SonarQube, Nexus, and System Metrics
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'igl5-g4-evenement-monitoring'
+    environment: 'development'
+    team: 'igl5-g4'
+
+# Alerting configuration (optional)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          team: 'devops'
+
+  # Node Exporter - System metrics (CPU, Memory, Disk, Network)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+          instance: 'devops-server'
+          team: 'igl5-g4'
+
+  # Jenkins - CI/CD Pipeline metrics
+  # NOTE: Requires "Prometheus Metrics Plugin" in Jenkins
+  - job_name: 'jenkins'
+    metrics_path: '/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          service: 'jenkins'
+          team: 'igl5-g4'
+          module: 'evenement'
+
+  # SonarQube - Code Quality metrics
+  - job_name: 'sonarqube'
+    metrics_path: '/api/monitoring/metrics'
+    static_configs:
+      - targets: ['sonarqube:9000']
+        labels:
+          service: 'sonarqube'
+          team: 'igl5-g4'
+          project: 'gestion-projet'
+
+  # Nexus - Artifact Repository metrics
+  - job_name: 'nexus'
+    metrics_path: '/service/metrics/prometheus'
+    static_configs:
+      - targets: ['nexus:8081']
+        labels:
+          service: 'nexus'
+          team: 'igl5-g4'
