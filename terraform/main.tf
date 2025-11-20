@@ -2,38 +2,6 @@ locals {
   name_prefix = "${var.project_name}"
 }
 
-# ----------------------
-# Variables
-# ----------------------
-variable "project_name" {
-  description = "Name of the project"
-  type        = string
-  default     = "spring-app"
-}
-
-variable "node_instance_type" {
-  description = "EC2 instance type for EKS nodes"
-  type        = string
-  default     = "t2.medium"
-}
-
-variable "node_desired" {
-  description = "Desired number of nodes"
-  type        = number
-  default     = 2
-}
-
-variable "node_min" {
-  description = "Minimum number of nodes"
-  type        = number
-  default     = 1
-}
-
-variable "node_max" {
-  description = "Maximum number of nodes"
-  type        = number
-  default     = 3
-}
 
 # Pre-created IAM roles
 variable "eks_role_arn" {
