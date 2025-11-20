@@ -42,9 +42,10 @@ resource "docker_container" "prometheus" {
     external = 9090
   }
 
+  # Mount the whole directory instead of a single file
   volumes {
-    host_path      = abspath("${path.module}/prometheus/prometheus.yml")
-    container_path = "/etc/prometheus/prometheus.yml"
+    host_path      = abspath("${path.module}/prometheus")
+    container_path = "/etc/prometheus"
     read_only      = true
   }
 
@@ -65,6 +66,7 @@ resource "docker_container" "prometheus" {
     "--web.enable-lifecycle"
   ]
 }
+
 
 # ============================================
 # GRAFANA - Dashboards & Visualization
