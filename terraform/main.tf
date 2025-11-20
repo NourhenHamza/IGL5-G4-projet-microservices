@@ -3,8 +3,58 @@ locals {
 }
 
 # ----------------------
+# Variables
+# ----------------------
+variable "project_name" {
+  description = "Name of the project"
+  type        = string
+  default     = "spring-app"
+}
+
+variable "node_instance_type" {
+  description = "EC2 instance type for EKS nodes"
+  type        = string
+  default     = "t2.medium"
+}
+
+variable "node_desired" {
+  description = "Desired number of nodes"
+  type        = number
+  default     = 2
+}
+
+variable "node_min" {
+  description = "Minimum number of nodes"
+  type        = number
+  default     = 1
+}
+
+variable "node_max" {
+  description = "Maximum number of nodes"
+  type        = number
+  default     = 3
+}
+
+# Pre-created IAM roles
+variable "eks_role_arn" {
+  description = "ARN of pre-created IAM role for EKS control plane"
+  type        = string
+  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827-LabEksClusterRole-S2evLHWJHH8q"
+}
+
+variable "eks_node_role_arn" {
+  description = "ARN of pre-created IAM role for EKS worker nodes"
+  type        = string
+  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827070-LabEksNodeRole-XM0TklYMNNkG"
+}
+
+# ----------------------
 # Networking
 # ----------------------
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -30,10 +80,6 @@ resource "aws_subnet" "public" {
     "kubernetes.io/cluster/${local.name_prefix}-eks" = "shared"
     "kubernetes.io/role/elb"                         = "1"
   }
-}
-
-data "aws_availability_zones" "available" {
-  state = "available"
 }
 
 resource "aws_route_table" "public_rt" {
@@ -62,7 +108,6 @@ resource "aws_security_group" "eks_sg" {
   description = "Security group for EKS cluster and nodes"
   vpc_id      = aws_vpc.main.id
 
-  # Ingress for application port 8080
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -70,7 +115,6 @@ resource "aws_security_group" "eks_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # SSH (optional for docker host)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -78,7 +122,6 @@ resource "aws_security_group" "eks_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Egress (Allow all outbound traffic)
   egress {
     from_port   = 0
     to_port     = 0
@@ -92,69 +135,11 @@ resource "aws_security_group" "eks_sg" {
 }
 
 # ----------------------
-# IAM for EKS control plane
-# ----------------------
-data "aws_iam_policy_document" "eks_assume_role_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "eks_role" {
-  name               = "${local.name_prefix}-eks-role"
-  assume_role_policy = data.aws_iam_policy_document.eks_assume_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "eks_policy_attach" {
-  role       = aws_iam_role.eks_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
-
-# ----------------------
-# IAM for Node Group
-# ----------------------
-data "aws_iam_policy_document" "eks_node_assume_role_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "eks_node_role" {
-  name               = "${local.name_prefix}-eks-node-role"
-  assume_role_policy = data.aws_iam_policy_document.eks_node_assume_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach1" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach2" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach3" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-}
-
-# ----------------------
 # EKS Cluster
 # ----------------------
 resource "aws_eks_cluster" "eks" {
   name     = "${local.name_prefix}-eks"
-  role_arn = aws_iam_role.eks_role.arn
+  role_arn = var.eks_role_arn
   version  = "1.29"
 
   vpc_config {
@@ -163,10 +148,6 @@ resource "aws_eks_cluster" "eks" {
     endpoint_private_access = false
     endpoint_public_access  = true
   }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_policy_attach
-  ]
 
   tags = {
     Name = "${local.name_prefix}-eks"
@@ -179,7 +160,7 @@ resource "aws_eks_cluster" "eks" {
 resource "aws_eks_node_group" "nodes" {
   cluster_name    = aws_eks_cluster.eks.name
   node_group_name = "${local.name_prefix}-nodes"
-  node_role_arn   = aws_iam_role.eks_node_role.arn
+  node_role_arn   = var.eks_node_role_arn
   subnet_ids      = [aws_subnet.public.id]
   instance_types  = [var.node_instance_type]
   ami_type        = "AL2_x86_64"
@@ -191,15 +172,12 @@ resource "aws_eks_node_group" "nodes" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.eks_worker_attach1,
-    aws_iam_role_policy_attachment.eks_worker_attach2,
-    aws_iam_role_policy_attachment.eks_worker_attach3,
     aws_eks_cluster.eks
   ]
 }
 
 # ----------------------
-# Optional EC2 docker host (keeps parity with previous terraform)
+# Optional EC2 docker host
 # ----------------------
 data "aws_ami" "amazon_linux" {
   most_recent = true
