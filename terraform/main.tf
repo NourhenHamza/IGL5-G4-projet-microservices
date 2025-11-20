@@ -1,5 +1,5 @@
 locals {
-  name_prefix = "${var.project_name}"
+  name_prefix = var.project_name
 }
 
 # ----------------------
@@ -23,14 +23,17 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
 
+# Multi-AZ public subnets
 resource "aws_subnet" "public" {
+  count = 2
+
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = data.aws_availability_zones.available.names[0]
+  cidr_block              = cidrsubnet("10.0.0.0/16", 8, count.index)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name                                            = "${local.name_prefix}-subnet"
+    Name                                            = "${local.name_prefix}-subnet-${count.index + 1}"
     "kubernetes.io/cluster/${local.name_prefix}-eks" = "shared"
     "kubernetes.io/role/elb"                         = "1"
   }
@@ -50,7 +53,8 @@ resource "aws_route_table" "public_rt" {
 }
 
 resource "aws_route_table_association" "assoc" {
-  subnet_id      = aws_subnet.public.id
+  count          = 2
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public_rt.id
 }
 
@@ -62,6 +66,7 @@ resource "aws_security_group" "eks_sg" {
   description = "Security group for EKS cluster and nodes"
   vpc_id      = aws_vpc.main.id
 
+  # Ingress for application port 8080
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -69,6 +74,7 @@ resource "aws_security_group" "eks_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # SSH (optional for docker host)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -76,6 +82,7 @@ resource "aws_security_group" "eks_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Egress
   egress {
     from_port   = 0
     to_port     = 0
@@ -97,7 +104,7 @@ resource "aws_eks_cluster" "eks" {
   version  = "1.29"
 
   vpc_config {
-    subnet_ids         = [aws_subnet.public.id]
+    subnet_ids         = aws_subnet.public[*].id
     security_group_ids = [aws_security_group.eks_sg.id]
     endpoint_private_access = false
     endpoint_public_access  = true
@@ -115,7 +122,7 @@ resource "aws_eks_node_group" "nodes" {
   cluster_name    = aws_eks_cluster.eks.name
   node_group_name = "${local.name_prefix}-nodes"
   node_role_arn   = var.eks_node_role_arn
-  subnet_ids      = [aws_subnet.public.id]
+  subnet_ids      = aws_subnet.public[*].id
   instance_types  = [var.node_instance_type]
   ami_type        = "AL2_x86_64"
 
@@ -146,7 +153,7 @@ data "aws_ami" "amazon_linux" {
 resource "aws_instance" "docker_host" {
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.public.id
+  subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.eks_sg.id]
 

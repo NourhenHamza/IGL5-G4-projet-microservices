@@ -1,9 +1,3 @@
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  default     = "us-east-1"
-}
-
 variable "aws_access_key" {
   description = "AWS access key"
   type        = string
@@ -37,7 +31,7 @@ variable "node_instance_type" {
 variable "node_desired" {
   description = "Desired EKS node count"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "node_min" {
@@ -47,7 +41,7 @@ variable "node_min" {
 
 variable "node_max" {
   type    = number
-  default = 2
+  default = 3
 }
 
 variable "eks_role_arn" {
