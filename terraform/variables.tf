@@ -1,3 +1,9 @@
+variable "aws_region" {
+  description = "AWS region to deploy resources in"
+  type        = string
+  default     = "us-east-1" # or any region you want
+}
+
 variable "aws_access_key" {
   description = "AWS access key"
   type        = string
