@@ -2,20 +2,6 @@ locals {
   name_prefix = "${var.project_name}"
 }
 
-
-# Pre-created IAM roles
-variable "eks_role_arn" {
-  description = "ARN of pre-created IAM role for EKS control plane"
-  type        = string
-  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827-LabEksClusterRole-S2evLHWJHH8q"
-}
-
-variable "eks_node_role_arn" {
-  description = "ARN of pre-created IAM role for EKS worker nodes"
-  type        = string
-  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827070-LabEksNodeRole-XM0TklYMNNkG"
-}
-
 # ----------------------
 # Networking
 # ----------------------
