@@ -1,11 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-app-deployment
+  name: spring-app
+  namespace: spring-app
   labels:
     app: spring-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: spring-app
@@ -15,21 +16,20 @@ spec:
         app: spring-app
     spec:
       containers:
-      - name: spring-app-container
-        # The image will be replaced by the Jenkins pipeline script (sed command)
-        image: __DOCKER_IMAGE__ 
-        ports:
-        - containerPort: 8080
-        # Recommended readiness/liveness probes for production
-        readinessProbe:
-          httpGet:
-            path: /actuator/health/readiness # Assuming Spring Boot Actuator is available
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        livenessProbe:
-          httpGet:
-            path: /actuator/health/liveness
-            port: 8080
-          initialDelaySeconds: 15
-          periodSeconds: 10
+        - name: spring-app
+          image: nouhaabid/igl5-g4-projet-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          readinessProbe:
+            httpGet:
+              path: /GestionEvenement/actuator/health
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /GestionEvenement/actuator/health
+              port: 8082
+            initialDelaySeconds: 60
+            periodSeconds: 20
