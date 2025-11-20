@@ -78,69 +78,30 @@ resource "aws_security_group" "eks_sg" {
 }
 
 # ----------------------
-# IAM Roles for EKS Cluster
+# IAM Role Lookup (Using existing roles provided by ARNs)
+# NOTE: This replaces the resource creation blocks that failed due to permission errors.
+# The ARNs are supplied via variables from the Jenkinsfile.
 # ----------------------
-resource "aws_iam_role" "eks_role" {
-  name = "${var.project_name}-eks-role"
-  assume_role_policy = data.aws_iam_policy_document.eks_assume_role_policy.json
+data "aws_iam_role" "eks_role_lookup" {
+  # This performs a lookup using the ARN provided by the Jenkins pipeline.
+  # The role must exist and have the AmazonEKSClusterPolicy attached.
+  arn = var.eks_cluster_role_arn
 }
 
-data "aws_iam_policy_document" "eks_assume_role_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
+data "aws_iam_role" "eks_node_role_lookup" {
+  # This performs a lookup using the ARN provided by the Jenkins pipeline.
+  # The role must exist and have EKS worker policies attached.
+  arn = var.eks_node_role_arn
 }
 
-resource "aws_iam_role_policy_attachment" "eks_policy_attach" {
-  role       = aws_iam_role.eks_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
-
-# ----------------------
-# IAM Roles for EKS Worker Nodes
-# ----------------------
-resource "aws_iam_role" "eks_node_role" {
-  name = "${var.project_name}-eks-node-role"
-  assume_role_policy = data.aws_iam_policy_document.eks_node_assume_role_policy.json
-}
-
-data "aws_iam_policy_document" "eks_node_assume_role_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach1" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach2" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_worker_attach3" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-}
 
 # ----------------------
 # EKS Cluster
 # ----------------------
 resource "aws_eks_cluster" "eks" {
   name     = "${var.project_name}-eks"
-  role_arn = aws_iam_role.eks_role.arn
+  # Reference the ARN from the data source lookup
+  role_arn = data.aws_iam_role.eks_role_lookup.arn
   version  = "1.29"
 
   vpc_config {
@@ -148,10 +109,7 @@ resource "aws_eks_cluster" "eks" {
     security_group_ids = [aws_security_group.eks_sg.id]
   }
 
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_policy_attach
-  ]
-
+  # Removed IAM role policy attachments from depends_on, as they are now external.
   tags = {
     Name = "${var.project_name}-eks"
   }
@@ -163,7 +121,8 @@ resource "aws_eks_cluster" "eks" {
 resource "aws_eks_node_group" "nodes" {
   cluster_name    = aws_eks_cluster.eks.name
   node_group_name = "${var.project_name}-nodes"
-  node_role_arn   = aws_iam_role.eks_node_role.arn
+  # Reference the ARN from the data source lookup
+  node_role_arn   = data.aws_iam_role.eks_node_role_lookup.arn
   subnet_ids      = [aws_subnet.public.id]
   instance_types  = ["t3.medium"]
   ami_type        = "AL2_x86_64"
@@ -175,16 +134,12 @@ resource "aws_eks_node_group" "nodes" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.eks_worker_attach1,
-    aws_iam_role_policy_attachment.eks_worker_attach2,
-    aws_iam_role_policy_attachment.eks_worker_attach3,
     aws_eks_cluster.eks
   ]
 }
 
 # ----------------------
 # Docker Host (EC2 Instance)
-# This resource is added to satisfy the 'EC2_public_ip' output in output.tf
 # ----------------------
 data "aws_ami" "amazon_linux" {
   most_recent = true
