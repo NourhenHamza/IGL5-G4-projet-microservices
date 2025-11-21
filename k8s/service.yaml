@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: spring-app-service
   namespace: spring-app
-  labels:
-    app: spring-app
 spec:
   type: LoadBalancer
   selector:

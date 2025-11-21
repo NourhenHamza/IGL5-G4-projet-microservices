@@ -1,10 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-app
+  name: spring-app-deployment
   namespace: spring-app
-  labels:
-    app: spring-app
 spec:
   replicas: 2
   selector:
