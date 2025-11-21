@@ -9,7 +9,7 @@ provider "aws" {
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "eks-cluster-sg-${var.cluster_name}"
   description = "Security group for EKS cluster ${var.cluster_name}"
-  vpc_id = "vpc-058085601c11671d3"
+  vpc_id = "vpc-03bac0c07fda4ec04"
 
   ingress {
     from_port   = 8083
@@ -70,7 +70,7 @@ resource "aws_security_group" "eks_worker_sg" {
 
 resource "aws_eks_cluster" "my_cluster" {
   name     = var.cluster_name
-  role_arn = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108-LabEksClusterRole-7u3vABVhi3Z6"
+  role_arn = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108-LabEksClusterRole-NanrojXfc9CR"
   version  = "1.30"
 
   vpc_config {
@@ -81,7 +81,7 @@ resource "aws_eks_cluster" "my_cluster" {
 
 resource "aws_eks_node_group" "my_node_group" {
   cluster_name    = aws_eks_cluster.my_cluster.name
-  node_role_arn   = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108509-LabEksNodeRole-FatiPapQr2mQ"
+  node_role_arn   = "arn:aws:iam::918108509555:role/c180773a4650446l12589486t1w918108509-LabEksNodeRole-qpE5lTLlSjXh"
   node_group_name = "noeud1"
   subnet_ids      = var.subnet_ids
 
@@ -91,6 +91,7 @@ resource "aws_eks_node_group" "my_node_group" {
     min_size     = 1
   }
 }
+
 
 
 
