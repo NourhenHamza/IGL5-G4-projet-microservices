@@ -12,7 +12,6 @@ import tn.esprit.spring.service.classes.SalleService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/salles")
@@ -54,7 +53,7 @@ public class SalleController {
         List<Salle> salles = salleService.getAllSalles();
         List<SalleDTO> salleDTOs = salles.stream()
                 .map(SalleMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList(); 
         return ResponseEntity.ok(salleDTOs);
     }
 
@@ -75,7 +74,7 @@ public class SalleController {
         List<Salle> salles = salleService.getSallesDisponibles();
         List<SalleDTO> salleDTOs = salles.stream()
                 .map(SalleMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();  
         return ResponseEntity.ok(salleDTOs);
     }
 
@@ -85,7 +84,7 @@ public class SalleController {
         List<Salle> salles = salleService.getSallesParCapaciteMin(min);
         List<SalleDTO> salleDTOs = salles.stream()
                 .map(SalleMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();  
         return ResponseEntity.ok(salleDTOs);
     }
 
