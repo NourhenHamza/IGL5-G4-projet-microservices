@@ -128,6 +128,11 @@ resource "aws_eks_cluster" "my_cluster" {
   tags = {
     Name = var.cluster_name
   }
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 }
 
 # EKS Node Group
