@@ -53,11 +53,11 @@ variable "node_max" {
 variable "eks_role_arn" {
   description = "ARN of pre-created IAM role for EKS control plane"
   type        = string
-  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827-LabEksClusterRole-JaOBDjYahmup"
+  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827-LabEksClusterRole-Eo6ArGSnV6nV"
 }
 
 variable "eks_node_role_arn" {
   description = "ARN of pre-created IAM role for EKS worker nodes"
   type        = string
-  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827070-LabEksNodeRole-YxRjn9DxG14b"
+  default     = "arn:aws:iam::969827070936:role/c180773a4650446l12670702t1w969827070-LabEksNodeRole-mvSFDMm48eZi"
 }
