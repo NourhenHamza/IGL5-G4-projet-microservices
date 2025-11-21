@@ -1,316 +1,159 @@
-terraform {
-  required_version = ">= 1.0"
+provider "aws" {
+  region = var.aws_region
+}
 
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
-    }
+# Reference existing VPC
+data "aws_vpc" "existing" {
+  id = var.vpc_id
+}
+
+# Security group for EKS cluster
+resource "aws_security_group" "eks_cluster_sg" {
+  name        = "eks-cluster-sg-${var.cluster_name}"
+  description = "Security group for EKS cluster ${var.cluster_name}"
+  vpc_id      = var.vpc_id
+
+  # Application port (Spring Boot runs on 8082)
+  ingress {
+    description = "Spring Boot Application"
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # NodePort range for Kubernetes services
+  ingress {
+    description = "Kubernetes NodePort Services"
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS for Kubernetes API
+  ingress {
+    description = "Kubernetes API HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow all outbound traffic
+  egress {
+    description = "Allow all outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "eks-cluster-sg-${var.cluster_name}"
   }
 }
 
-provider "docker" {
-  host = "unix:///var/run/docker.sock"
+# Security group for EKS worker nodes
+resource "aws_security_group" "eks_worker_sg" {
+  name        = "eks-worker-sg-${var.cluster_name}"
+  description = "Security group for EKS worker nodes ${var.cluster_name}"
+  vpc_id      = var.vpc_id
+
+  # Application port
+  ingress {
+    description = "Spring Boot Application"
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # NodePort range
+  ingress {
+    description = "Kubernetes NodePort Services"
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow all traffic within the security group (pod-to-pod communication)
+  ingress {
+    description = "Node to node communication"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+  }
+
+  # Allow traffic from cluster security group
+  ingress {
+    description     = "Allow cluster control plane"
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_cluster_sg.id]
+  }
+
+  # Allow all outbound traffic
+  egress {
+    description = "Allow all outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "eks-worker-sg-${var.cluster_name}"
+  }
 }
 
-# Docker Network for all services
-resource "docker_network" "devops_network" {
-  name   = "devops-network"
-  driver = "bridge"
-}
+# EKS Cluster
+resource "aws_eks_cluster" "my_cluster" {
+  name     = var.cluster_name
+  role_arn = var.role_arn
+  version  = "1.30"
 
-# ============================================
-# PROMETHEUS - Monitoring & Metrics Collection
-# ============================================
-
-resource "docker_image" "prometheus" {
-  name = "prom/prometheus:latest"
-}
-
-resource "docker_volume" "prometheus_data" {
-  name = "prometheus-data"
-}
-
-resource "docker_container" "prometheus" {
-  name  = "prometheus"
-  image = docker_image.prometheus.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 9090
-    external = 9090
+  vpc_config {
+    subnet_ids         = var.subnet_ids
+    security_group_ids = [aws_security_group.eks_cluster_sg.id]
   }
 
-  # Mount the whole directory instead of a single file
-  volumes {
-    host_path      = abspath("${path.module}/prometheus")
-    container_path = "/etc/prometheus"
-    read_only      = true
-  }
-
-  volumes {
-    volume_name    = docker_volume.prometheus_data.name
-    container_path = "/prometheus"
-  }
-
-  networks_advanced {
-    name = docker_network.devops_network.name
-  }
-
-  command = [
-    "--config.file=/etc/prometheus/prometheus.yml",
-    "--storage.tsdb.path=/prometheus",
-    "--web.console.libraries=/usr/share/prometheus/console_libraries",
-    "--web.console.templates=/usr/share/prometheus/consoles",
-    "--web.enable-lifecycle"
-  ]
-}
-
-
-# ============================================
-# GRAFANA - Dashboards & Visualization
-# ============================================
-
-resource "docker_image" "grafana" {
-  name = "grafana/grafana:latest"
-}
-
-resource "docker_volume" "grafana_data" {
-  name = "grafana-data"
-}
-
-resource "docker_container" "grafana" {
-  name  = "grafana"
-  image = docker_image.grafana.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 3000
-    external = 3000
-  }
-
-  volumes {
-    volume_name    = docker_volume.grafana_data.name
-    container_path = "/var/lib/grafana"
-  }
-
-  networks_advanced {
-    name = docker_network.devops_network.name
-  }
-
-  env = [
-    "GF_SECURITY_ADMIN_USER=admin",
-    "GF_SECURITY_ADMIN_PASSWORD=esprit",
-    "GF_INSTALL_PLUGINS=grafana-piechart-panel",
-    "GF_USERS_ALLOW_SIGN_UP=false"
-  ]
-}
-
-# ============================================
-# NODE EXPORTER - System Metrics
-# ============================================
-
-resource "docker_image" "node_exporter" {
-  name = "prom/node-exporter:latest"
-}
-
-resource "docker_container" "node_exporter" {
-  name  = "node-exporter"
-  image = docker_image.node_exporter.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 9100
-    external = 9100
-  }
-
-  networks_advanced {
-    name = docker_network.devops_network.name
-  }
-
-  volumes {
-    host_path      = "/proc"
-    container_path = "/host/proc"
-    read_only      = true
-  }
-
-  volumes {
-    host_path      = "/sys"
-    container_path = "/host/sys"
-    read_only      = true
-  }
-
-  volumes {
-    host_path      = "/"
-    container_path = "/rootfs"
-    read_only      = true
-  }
-
-  command = [
-    "--path.procfs=/host/proc",
-    "--path.sysfs=/host/sys",
-    "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
-  ]
-}
-
-# ============================================
-# SONARQUBE - Already exists in your setup
-# ============================================
-
-resource "docker_image" "sonarqube" {
-  name = "sonarqube:latest"
-}
-
-resource "docker_volume" "sonarqube_data" {
-  name = "sonarqube-data"
-}
-
-resource "docker_volume" "sonarqube_logs" {
-  name = "sonarqube-logs"
-}
-
-resource "docker_volume" "sonarqube_extensions" {
-  name = "sonarqube-extensions"
-}
-
-resource "docker_container" "sonarqube" {
-  name  = "sonarqube"
-  image = docker_image.sonarqube.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 9000
-    external = 9000
-  }
-
-  volumes {
-    volume_name    = docker_volume.sonarqube_data.name
-    container_path = "/opt/sonarqube/data"
-  }
-
-  volumes {
-    volume_name    = docker_volume.sonarqube_logs.name
-    container_path = "/opt/sonarqube/logs"
-  }
-
-  volumes {
-    volume_name    = docker_volume.sonarqube_extensions.name
-    container_path = "/opt/sonarqube/extensions"
-  }
-
-  networks_advanced {
-    name = docker_network.devops_network.name
-  }
-
-  env = [
-    "SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true"
-  ]
-}
-
-# ============================================
-# MYSQL DATABASE - For Application & Tests
-# ============================================
-
-resource "docker_image" "mysql" {
-  name = "mysql:8.0"
-}
-
-resource "docker_volume" "mysql_data" {
-  name = "mysql-data"
-}
-
-resource "docker_container" "mysql" {
-  name  = "mysql-db"
-  image = docker_image.mysql.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 3306
-    external = 3306
-  }
-
-  volumes {
-    volume_name    = docker_volume.mysql_data.name
-    container_path = "/var/lib/mysql"
-  }
-
-  networks_advanced {
-    name = docker_network.devops_network.name
-    aliases = ["mysql-db", "host.docker.internal"]
-  }
-
-  env = [
-    "MYSQL_ROOT_PASSWORD=root",
-    "MYSQL_DATABASE=gestionevenement",
-    "MYSQL_USER=esprit",
-    "MYSQL_PASSWORD=esprit"
+  depends_on = [
+    aws_security_group.eks_cluster_sg
   ]
 
-  # Wait for MySQL to be ready
-  healthcheck {
-    test     = ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-    interval = "10s"
-    timeout  = "5s"
-    retries  = 5
+  tags = {
+    Name = var.cluster_name
   }
 }
 
-# ============================================
-# NEXUS - Already exists in your setup
-# ============================================
+# EKS Node Group
+resource "aws_eks_node_group" "my_node_group" {
+  cluster_name    = aws_eks_cluster.my_cluster.name
+  node_group_name = "noeud1"
+  node_role_arn   = var.role_arn
+  subnet_ids      = var.subnet_ids
 
-resource "docker_image" "nexus" {
-  name = "sonatype/nexus3:latest"
-}
-
-resource "docker_volume" "nexus_data" {
-  name = "nexus-data"
-}
-
-resource "docker_container" "nexus" {
-  name  = "nexus"
-  image = docker_image.nexus.image_id
-
-  restart = "unless-stopped"
-
-  ports {
-    internal = 8081
-    external = 8081
+  scaling_config {
+    desired_size = 2
+    max_size     = 3
+    min_size     = 1
   }
 
-  volumes {
-    volume_name    = docker_volume.nexus_data.name
-    container_path = "/nexus-data"
-  }
+  # Instance type for worker nodes
+  instance_types = ["t3.medium"]
 
-  networks_advanced {
-    name = docker_network.devops_network.name
-  }
-}
+  # Disk size for worker nodes
+  disk_size = 20
 
-# ============================================
-# OUTPUTS
-# ============================================
+  depends_on = [
+    aws_eks_cluster.my_cluster
+  ]
 
-output "services_info" {
-  value = {
-    prometheus_url = "http://localhost:9090"
-    grafana_url    = "http://localhost:3000"
-    grafana_user   = "admin"
-    grafana_pass   = "esprit"
-    node_exporter  = "http://localhost:9100"
-    sonarqube_url  = "http://localhost:9000"
-    nexus_url      = "http://localhost:8081"
-    mysql_url      = "jdbc:mysql://localhost:3306/gestionevenement"
-    mysql_user     = "root"
-    mysql_pass     = "root"
-    app_url        = "http://localhost:8082/GestionEvenement"
+  tags = {
+    Name = "noeud1"
   }
-  description = "Access URLs for all services"
-  sensitive   = true
 }
