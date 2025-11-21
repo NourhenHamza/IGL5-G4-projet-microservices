@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestionEvenement
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - spring-boot-mysql-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  spring-boot-app:
+    container_name: gestion-evenement-app
+    image: tomcat:9-jdk11
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/gestionEvenement?useUnicode=true&useJDBCCompliantTimezoneShift=true&createDatabaseIfNotExist=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SERVER_SERVLET_CONTEXT_PATH: /GestionEvenement
+      SERVER_PORT: "8082"
+      SPRING_MVC_PATHMATCH_MATCHING_STRATEGY: ANT_PATH_MATCHER
+      LOGGING_LEVEL_COM_ZAXXER_HIKARI: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: INFO
+      LOGGING_LEVEL_ROOT: INFO
+    volumes:
+      - ./target/gestion_evenement-0.0.3-SNAPSHOT.jar:/usr/local/tomcat/webapps/ROOT.jar
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    networks:
+      - spring-boot-mysql-net
+
+volumes:
+  mysql_data:
+
+networks:
+  spring-boot-mysql-net:
+    driver: bridge
