@@ -10,7 +10,8 @@
 	</parent>
 	<groupId>tn.esprit.spring</groupId>
 	<artifactId>gestion_projet</artifactId>
-	<version>1.0</version>
+	<!-- Changed from 1.0 to 0.0.3-SNAPSHOT for Nexus snapshots repository -->
+	<version>0.0.3-SNAPSHOT</version>
 	<name>gestion_projet</name>
 	<description>gestion_projet</description>
 	<properties>
@@ -20,6 +21,16 @@
 		<sonar.projectKey>mon-projet-spring</sonar.projectKey>
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
 	</properties>
+
+	<!-- ADD THIS SECTION: Nexus Distribution Management -->
+	<distributionManagement>
+		<repository>
+			<id>deploymentRepo</id>
+			<name>Nexus Repository</name>
+			<url>http://localhost:8081/repository/maven-snapshots/</url>
+		</repository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
