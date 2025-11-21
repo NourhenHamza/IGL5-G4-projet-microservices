@@ -13,7 +13,7 @@ variable "cluster_name" {
 variable "subnet_ids" {
   description = "IDs des sous-réseaux"
   type        = list(string)
-  default     = ["subnet-0dde5728f2f7b9cb1", "subnet-0f066f1f8843180d0"]  # Valeurs par défaut
+  default     = ["subnet-0dde5728f2f7b9cb1", "subnet-02706b2c6198d5789"]  # Valeurs par défaut
 }
 
 
@@ -28,6 +28,7 @@ variable "vpc_cidr" {
   type        = string
   default     = "10.0.0.0/16"  # Modifiez-le selon vos besoins
 }
+
 
 
 
