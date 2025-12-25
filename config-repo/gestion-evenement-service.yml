@@ -7,14 +7,12 @@ spring:
   application:
     name: gestion-evenement-service
   
-  # Configuration de la base de données
   datasource:
     url: jdbc:mysql://localhost:3306/gestionevenement?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
   
-  # Configuration JPA
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,15 +22,12 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
 
-# Configuration Logging
 logging:
   level:
     root: INFO
     tn.esprit.spring: DEBUG
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-# Configuration Actuator
 management:
   endpoints:
     web:
@@ -41,11 +36,3 @@ management:
   endpoint:
     health:
       show-details: always
-
-# Configuration Swagger
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
