@@ -8,8 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/NourhenHamza/IGL5-G4-projet-microservices
-          search-paths: config-repo  # Cherche dans le sous-dossier config-repo
+          uri: file:///C:/Users/User-PC/IGL5-G4-projet-microservices/config-repo
           default-label: main
           clone-on-start: true
-          timeout: 10
+          force-pull: true
