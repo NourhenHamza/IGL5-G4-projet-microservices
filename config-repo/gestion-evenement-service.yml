@@ -8,7 +8,7 @@ spring:
     name: gestion-evenement-service
   
   datasource:
-    url: jdbc:mysql://localhost:3306/gestionevenement?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/gestionevenement?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
