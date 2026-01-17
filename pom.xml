@@ -20,6 +20,7 @@
         <module>config-server</module>
         <module>eureka-server</module>
         <module>gestion-evenement-service</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
