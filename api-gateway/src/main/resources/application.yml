@@ -13,19 +13,37 @@ spring:
           lower-case-service-id: true
       
       routes:
-        # Route pour le service Gestion Événement (avec StripPrefix)
-        - id: gestion-evenement-service
-          uri: lb://gestion-evenement-service
+        # Route pour resilience-test
+        - id: gestion-evenement-resilience
+          uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
-            - Path=/evenement/**
+            - Path=/GestionEvenement/resilience-test/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
         
-        # Route alternative avec context-path original
-        - id: gestion-evenement-service-direct
-          uri: lb://gestion-evenement-service
+        # Route pour feign-test
+        - id: gestion-evenement-feign
+          uri: lb://GESTION-EVENEMENT-SERVICE
+          predicates:
+            - Path=/GestionEvenement/feign-test/**
+          filters:
+            - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
+        
+        # Route pour logistique
+        - id: gestion-evenement-logistique
+          uri: lb://GESTION-EVENEMENT-SERVICE
+          predicates:
+            - Path=/GestionEvenement/logistique/**
+          filters:
+            - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
+        
+        # Route g?n?rique pour tout GestionEvenement
+        - id: gestion-evenement-general
+          uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
             - Path=/GestionEvenement/**
+          filters:
+            - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
 
 # Configuration Eureka Client
 eureka:
