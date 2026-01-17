@@ -4264,3 +4264,8 @@ Clique Execute
 
 grafana:
  http://localhost:3000/d/gestion-evenement-mon/f09f8eaf-gestion-evenement-monitoring?orgId=1&from=now-15m&to=now&timezone=browser&refresh=5s
+
+
+.\start-load-balancing.ps1
+
+ .\test-load-balancing.ps1
