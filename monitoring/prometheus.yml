@@ -9,3 +9,17 @@ scrape_configs:
       - targets: ['host.docker.internal:8083']
         labels:
           application: 'gestion-evenement-service'
+  
+  - job_name: 'salle-service'
+    metrics_path: '/GestionSalle/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8085']
+        labels:
+          application: 'salle-service'
+  
+  - job_name: 'api-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8089']
+        labels:
+          application: 'api-gateway'
