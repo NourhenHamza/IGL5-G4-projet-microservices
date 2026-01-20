@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/salles")
+@CrossOrigin(origins = "http://localhost:8080")
 @RequiredArgsConstructor
 @Slf4j
 public class SalleController {
