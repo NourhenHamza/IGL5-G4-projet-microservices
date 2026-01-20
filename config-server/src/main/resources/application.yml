@@ -4,11 +4,12 @@ server:
 spring:
   application:
     name: config-server
+
+  profiles:
+    active: native
+
   cloud:
     config:
       server:
-        git:
-          uri: file:///C:/Users/User-PC/IGL5-G4-projet-microservices/config-repo
-          default-label: main
-          clone-on-start: true
-          force-pull: true
+        native:
+          search-locations: file:///E:/IGL5-G4-projet-microservices/config-repo

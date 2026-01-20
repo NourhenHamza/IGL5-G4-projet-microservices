@@ -13,7 +13,7 @@ spring:
           lower-case-service-id: true
       
       routes:
-        # Route pour resilience-test
+        # ==================== GESTION EVENEMENT ROUTES ====================
         - id: gestion-evenement-resilience
           uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
@@ -21,7 +21,6 @@ spring:
           filters:
             - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
         
-        # Route pour feign-test
         - id: gestion-evenement-feign
           uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
@@ -29,7 +28,6 @@ spring:
           filters:
             - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
         
-        # Route pour logistique
         - id: gestion-evenement-logistique
           uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
@@ -37,13 +35,35 @@ spring:
           filters:
             - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
         
-        # Route g?n?rique pour tout GestionEvenement
         - id: gestion-evenement-general
           uri: lb://GESTION-EVENEMENT-SERVICE
           predicates:
             - Path=/GestionEvenement/**
           filters:
             - RewritePath=/GestionEvenement/(?<segment>.*), /GestionEvenement/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: gestionEvenementCircuitBreaker
+                fallbackUri: forward:/fallback/gestion-evenement
+        
+        # ==================== SALLE SERVICE ROUTES ====================
+        - id: salle-service-salles
+          uri: lb://SALLE-SERVICE
+          predicates:
+            - Path=/GestionSalle/salles/**
+          filters:
+            - RewritePath=/GestionSalle/(?<segment>.*), /GestionSalle/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: salleCircuitBreaker
+                fallbackUri: forward:/fallback/salle-service
+        
+        - id: salle-service-general
+          uri: lb://SALLE-SERVICE
+          predicates:
+            - Path=/GestionSalle/**
+          filters:
+            - RewritePath=/GestionSalle/(?<segment>.*), /GestionSalle/$\{segment}
 
 # Configuration Eureka Client
 eureka:

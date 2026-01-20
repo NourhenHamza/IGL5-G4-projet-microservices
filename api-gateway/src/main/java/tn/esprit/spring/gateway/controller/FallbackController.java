@@ -26,6 +26,18 @@ public class FallbackController {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
     }
 
+    @GetMapping("/salle-service")
+    public ResponseEntity<Map<String, Object>> salleServiceFallback() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+        response.put("error", "Service Unavailable");
+        response.put("message", "Le service Gestion Salle est temporairement indisponible. Veuillez réessayer plus tard.");
+        response.put("service", "salle-service");
+        
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+    }
+
     @GetMapping("/default")
     public ResponseEntity<Map<String, Object>> defaultFallback() {
         Map<String, Object> response = new HashMap<>();

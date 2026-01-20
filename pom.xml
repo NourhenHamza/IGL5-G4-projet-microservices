@@ -21,6 +21,7 @@
         <module>eureka-server</module>
         <module>logistique-service</module>
         <module>api-gateway</module>
+        <module>salle-service</module> 
     </modules>
 
     <properties>
